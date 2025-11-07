@@ -8,7 +8,7 @@
 .form-login {
     display: flex;
     flex-direction: column;
-    gap: 30px;
+    gap: 20px;
     justify-content: center;
     align-items: center;
     flex-wrap: wrap;
@@ -23,25 +23,22 @@
 .form-login > form > p {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 10px;
     align-items: center;
 }
 .form-login > form > p > input {
     padding: 10px 15px;
-    border-radius: 50px;
-    background-color: rgba(119, 130, 255, 0.3);
+    border-radius: 5px;
+    background-color: rgba(0, 255, 255, 0.3);
+}
 
-}
-.form-login > form > p > input:valid {
-    background-color: rgba(127, 255, 0, 0.3);
-}
 
 .form-login > form > p > input:focus {
     border: green 1px;
 }
 
 button {
-    border-radius: 50px;
+    border-radius: 5px;
     padding: 10px 15px;
     background-color: white;
     width: 150px;

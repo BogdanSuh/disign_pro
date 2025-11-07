@@ -3,26 +3,39 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <title>Регистрация</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Регистрация — Design.pro</title>
     <link rel="stylesheet" href="{% static 'css/form_register.css' %}">
 </head>
 <body>
-<div class="form-register">
-    <h2>Регистрация</h2>
-    <form method="post">
-        {% csrf_token %}
-        {{ form.as_p }}
-        <button type="submit">Зарегистрироваться</button>
-    </form>
+    <div class="auth-container">
+        <div class="auth-card">
+            <header class="auth-header">
+                <h1>Добро пожаловать!</h1>
+                <p>Создайте аккаунт — и начните проектировать своё пространство уже сегодня.</p>
+            </header>
 
-    {% if form.non_field_errors %}
-        <div style="color: red;">
-            <p>Пожалуйста, исправьте следующие ошибки:</p>
-            {{ form.non_field_errors }}
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+
+                {{ form.as_p }}
+
+                {% if form.non_field_errors %}
+                    <div class="error-box">
+                        <h3>⚠️ Обратите внимание</h3>
+                        {{ form.non_field_errors }}
+                    </div>
+                {% endif %}
+
+                <button type="submit" class="btn btn-primary">
+                    Зарегистрироваться
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>Уже работаете с нами? <a href="{% url 'login' %}">Войти в аккаунт</a></p>
+            </div>
         </div>
-    {% endif %}
-
-    <p>Уже есть аккаунт? <a href="{% url 'login' %}">Войти</a></p>
-</div>
+    </div>
 </body>
 </html>

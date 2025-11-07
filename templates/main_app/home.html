@@ -1,86 +1,114 @@
 {% extends "base.html" %}
 
-{% block title %}Главная - Design.pro{% endblock %}
+{% block title %}Главная — Design.pro{% endblock %}
 {% load static %}
 {% block extra_css %}
     <link rel="stylesheet" href="{% static 'css/home.css' %}">
 {% endblock %}
+
 {% block content %}
-    <section class="about">
-        <h2>О нас</h2>
+<main class="home-content">
+
+
+        <h1>Добро пожаловать в Design.pro</h1>
+        <p>Дизайн, который вы чувствуете — а не просто видите.</p>
+
+
+
+    <section class="section about">
+        <h2>Кто мы</h2>
         <p>
-            Design.pro — это команда талантливых дизайнеров интерьеров, объединённых страстью к созданию
-            красивых, функциональных и уникальных пространств. Мы работаем с частными клиентами и коммерческими
-            проектами, помогая воплотить самые смелые идеи в жизнь.
+            Design.pro — небольшая, но очень увлечённая студия интерьерного дизайна. Мы создаём пространства,
+            в которых хочется оставаться: уютные квартиры, вдохновляющие офисы, гостеприимные кафе.
         </p>
         <p>
-            Наша миссия — сделать процесс проектирования интерьера максимально комфортным и прозрачным.
-            Мы ценим индивидуальность каждого клиента и создаём дизайн, который отражает его стиль и потребности.
+            Никаких шаблонов. Только индивидуальный подход, честная коммуникация и проекты, которые работают
+            на вас — а не наоборот.
         </p>
     </section>
-    <section class="service">
+
+    <section class="section services">
         <h2>Наши услуги</h2>
-        <ul>
-            <div>
-                <li>Разработка 2D и 3D проектов интерьеров</li>
-                <li>Подбор мебели, отделочных материалов и декора</li>
+        <div class="services-grid">
+            <div class="service-card">
+                <h3>Дизайн-проект</h3>
+                <ul>
+                    <li>Эскизы и планировочные решения</li>
+                    <li>3D-визуализации в фотореалистичном стиле</li>
+                    <li>Спецификации материалов и мебели</li>
+                </ul>
             </div>
-            <div>
-                <li>Авторский надзор за реализацией проекта</li>
-                <li>Консультации по дизайну и планировке</li>
+            <div class="service-card">
+                <h3>Сопровождение</h3>
+                <ul>
+                    <li>Подбор поставщиков и подрядчиков</li>
+                    <li>Авторский надзор на всех этапах</li>
+                    <li>Консультации «по горячим следам»</li>
+                </ul>
             </div>
-        </ul>
-    </section>
-    <div>
-        <h1>Добро пожаловать в Design.pro!</h1>
-        <p>Создайте заявку на дизайн интерьера или просмотрите выполненные работы.</p>
-    </div>
-    <h2>Последние выполненные работы:</h2>
-    {% if completed_requests %}
-        <div class="completed-requests">
-            {% for req in completed_requests %}
-                <div>
-                <div class="request-item-image">
-                    {% if req.design_image %}
-                        <img src="{{ req.design_image.url }}" alt="Дизайн {{ req.title }}"
-                             style="max-width: 200px; height: auto;">
-                    {% else %}
-                        <p>Изображение дизайна отсутствует.</p>
-                    {% endif %}
-                </div>
-                <div class="request-item">
-                    <div class="request-item-text">
-                        <h3>{{ req.title }}</h3>
-                        <p>Категория: {{ req.category.name }}</p>
-                        <p>Дата: {{ req.created_at|date:"d.m.Y H:i" }}</p>
-                        <p>Описание: {{ req.description }}</p>
-                    </div>
-                </div>
-                </div>
-            {% endfor %}
         </div>
-    {% else %}
-        <p>Выполненных работ пока нет.</p>
-    {% endif %}
+    </section>
 
-    <h2>Заявок в работе: {{ in_progress_count }}</h2>
 
-    {% if user.is_authenticated %}
-        {% if user.is_staff %}
-            <div class="link">
-                <p><a href="{% url 'admin_dashboard' %}">Перейти в админ-панель</a></p>
-                <p><a href="{% url 'manage_categories' %}">Управление категориями</a></p>
+    <section class="section portfolio">
+        <h2>Наши работы</h2>
+
+        {% if completed_requests %}
+            <div class="portfolio-grid">
+                {% for req in completed_requests %}
+                    <article class="portfolio-item">
+                        <div class="portfolio-image">
+                            {% if req.design_image %}
+                                <img src="{{ req.design_image.url }}"
+                                     alt="Проект: {{ req.title }}"
+                                     loading="lazy">
+                            {% else %}
+                                <div class="placeholder">Нет изображения</div>
+                            {% endif %}
+                        </div>
+                        <div class="portfolio-info">
+                            <h3>{{ req.title }}</h3>
+                            <p class="category">✦ {{ req.category.name }}</p>
+                            <p class="date">{{ req.created_at|date:"d E Y" }}</p>
+                            <p class="description">{{ req.description|truncatewords:15 }}</p>
+                        </div>
+                    </article>
+                {% endfor %}
             </div>
         {% else %}
-            <div class="link">
-                <p><a href="{% url 'user_dashboard' %}">Перейти в ваш личный кабинет</a></p>
-                <p><a href="{% url 'create_request' %}">Создать новую заявку</a></p>
-            </div>
+            <p class="empty-state">Пока нет завершённых проектов — но первые уже в финальной стадии!</p>
         {% endif %}
-    {% else %}
-        <div class="link">
-            <p><a href="{% url 'login' %}">Войдите</a>, чтобы создать заявку или посмотреть свои.</p>
-            <p><a href="{% url 'register' %}">Зарегистрируйтесь</a>, если у вас ещё нет аккаунта.</p>
-        </div>
-    {% endif %}
+    </section>
+
+
+    <section class="section stats">
+        <p>Активных проектов: <strong>{{ in_progress_count }}</strong></p>
+    </section>
+
+
+    <section class="section cta">
+        {% if user.is_authenticated %}
+            {% if user.is_staff %}
+                <h3>Для администраторов</h3>
+                <nav class="links">
+                    <a href="{% url 'admin_dashboard' %}">Админ-панель</a>
+                    <a href="{% url 'manage_categories' %}">Управление категориями</a>
+                </nav>
+            {% else %}
+                <h3>Для клиентов</h3>
+                <nav class="links">
+                    <a href="{% url 'user_dashboard' %}">Мои проекты</a>
+                    <a href="{% url 'create_request' %}" class="btn">Начать новый проект</a>
+                </nav>
+            {% endif %}
+        {% else %}
+            <h3>Хотите свой проект?</h3>
+            <p>Войдите или зарегистрируйтесь — это займёт меньше минуты.</p>
+            <nav class="links">
+                <a href="{% url 'login' %}">Войти</a>
+                <a href="{% url 'register' %}" class="btn">Регистрация</a>
+            </nav>
+        {% endif %}
+    </section>
+</main>
 {% endblock %}

@@ -1,22 +1,56 @@
 {% extends "base.html" %}
 
-{% block title %}Подтверждение удаления - Design.pro{% endblock %}
+{% block title %}Удалить заявку? — Design.pro{% endblock %}
 
 {% block content %}
-    <h1>Подтверждение удаления заявки</h1>
+<div class="container">
+    <div class="alert-box warning">
+        <div class="alert-content">
+            <h1>Вы уверены, что хотите удалить эту заявку?</h1>
+            <p class="alert-desc">
+                Это действие <strong>необратимо</strong>: вся информация по проекту — включая черновики, комментарии и загруженные файлы — будет удалена навсегда.
+            </p>
+        </div>
+    </div>
 
-    <p>Вы уверены, что хотите удалить следующую заявку?</p>
 
-    <h3>{{ request.title }}</h3>
-    <p><strong>Описание:</strong> {{ request.description|truncatechars:100 }}</p>
-    <p><strong>Категория:</strong> {{ request.category.name }}</p>
-    <p><strong>Статус:</strong> {{ request.get_status_display }}</p>
-    <p><strong>Дата создания:</strong> {{ request.created_at|date:"d.m.Y H:i" }}</p>
+    <div class="card request-preview">
+        <h2>{{ request.title }}</h2>
+        <div class="request-details">
+            <div class="detail-item">
+                <span class="label">Категория:</span>
+                <span class="value">{{ request.category.name }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Статус:</span>
+                <span class="value status-{{ request.status }}">{{ request.get_status_display }}</span>
+            </div>
+            <div class="detail-item">
+                <span class="label">Создана:</span>
+                <span class="value">{{ request.created_at|date:"d E Y, H:i" }}</span>
+            </div>
+            <div class="detail-item full-width">
+                <span class="label">Описание:</span>
+                <p class="value">{{ request.description|truncatechars:120 }}</p>
+            </div>
+        </div>
+    </div>
 
-    <form method="post">
-        {% csrf_token %}
-        <button type="submit" class="btn btn-danger">Да, удалить</button>
-        <a href="{% url 'user_dashboard' %}">Отмена</a>
-    </form>
 
+    <div class="action-bar">
+        <form method="post" style="display: inline;">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger btn-large">
+                 Да, удалить навсегда
+            </button>
+        </form>
+        <a href="{% url 'user_dashboard' %}" class="btn btn-secondary btn-large">
+            ← Отмена
+        </a>
+    </div>
+
+    <p class="hint">
+        Не уверены? Просто нажмите «Отмена» — заявка останется в вашем кабинете.
+    </p>
+</div>
 {% endblock %}

@@ -8,7 +8,7 @@
     <h2>Все заявки</h2>
 
     {% if requests %}
-        <table border="1" cellpadding="10" cellspacing="0">
+        <table>
             <thead>
             <tr>
                 <th>ID</th>
@@ -55,7 +55,7 @@
                         {% elif req.status == 'in_progress' %}
                             <a href="{% url 'change_status' request_id=req.id %}">Изменить статус</a>
                         {% else %}
-                            <!-- Статус можно изменить только у "новых" заявок -->
+
                             <span style="color: grey;">Изменить статус (недоступно)</span>
                         {% endif %}
                     </td>

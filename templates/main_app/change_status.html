@@ -1,63 +1,120 @@
 {% extends "base.html" %}
 
-{% block title %}Изменить статус заявки #{{ request_obj.id }} - Design.pro{% endblock %}
+{% block title %}Статус заявки #{{ request_obj.id }} — Design.pro{% endblock %}
 
 {% block content %}
-    <h1>Изменить статус заявки #{{ request_obj.id }}</h1>
-
-    <div class="request-preview">
-        <h3>Текущая заявка:</h3>
-        <p><strong>Заголовок:</strong> {{ request_obj.title }}</p>
-        <p><strong>Описание:</strong> {{ request_obj.description|truncatechars:100 }}</p>
-        <p><strong>Категория:</strong> {{ request_obj.category.name }}</p>
-        <p><strong>Текущий статус:</strong> {{ request_obj.get_status_display }}</p>
-        {% if request_obj.plan_image %}
-            <p><strong>План помещения:</strong> <a href="{{ request_obj.plan_image.url }}" target="_blank">Посмотреть</a></p>
-        {% endif %}
+<div class="container admin-form">
+    <div class="page-header">
+        <h1> Обновить статус проекта</h1>
+        <p class="subtitle">
+            Заявка #{{ request_obj.id }} · «{{ request_obj.title|truncatechars:40 }}»
+        </p>
     </div>
 
-    <h2>Форма изменения статуса</h2>
-    <p><strong>Важно:</strong> После выбора статуса "Выполнено" или "Принято в работу" необходимо заполнить соответствующие поля.</p>
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-
-        <div class="form-group">
-            <label for="{{ form.status.id_for_label }}">Новый статус:</label>
-            {{ form.status }}
-            {% if form.status.errors %}
-                <div class="alert alert-error">{{ form.status.errors }}</div>
+    <div class="card project-preview">
+        <h2>Текущая информация</h2>
+        <div class="project-details">
+            <div class="detail-row">
+                <span class="label">Категория:</span>
+                <span class="value">{{ request_obj.category.name }}</span>
+            </div>
+            <div class="detail-row">
+                <span class="label">Текущий статус:</span>
+                <span class="value status-badge status-{{ request_obj.status }}">
+                    {{ request_obj.get_status_display }}
+                </span>
+            </div>
+            <div class="detail-row full">
+                <span class="label">Описание:</span>
+                <p class="value">{{ request_obj.description|truncatechars:150 }}</p>
+            </div>
+            {% if request_obj.plan_image %}
+                <div class="detail-row">
+                    <span class="label">План помещения:</span>
+                    <span class="value">
+                        <a href="{{ request_obj.plan_image.url }}" target="_blank" class="link">
+                             Открыть изображение
+                        </a>
+                    </span>
+                </div>
             {% endif %}
-            <small>Доступные статусы: Принято в работу, Выполнено</small>
         </div>
+    </div>
 
-        <!-- Поле для изображения дизайна -->
-        <div class="form-group">
-            <label for="{{ form.design_image.id_for_label }}">Изображение дизайна (требуется для статуса "Выполнено"):</label>
-            {{ form.design_image }}
-            {% if form.design_image.errors %}
-                <div class="alert alert-error">{{ form.design_image.errors }}</div>
-            {% endif %}
-            <small>Форматы: jpg, jpeg, png, bmp. Макс. 2Мб.</small>
-            {% if request_obj.design_image %}
-                <p>Текущее изображение дизайна: <a href="{{ request_obj.design_image.url }}" target="_blank">Посмотреть</a></p>
-            {% endif %}
-        </div>
 
-        <!-- Поле для комментария -->
-        <div class="form-group">
-            <label for="{{ form.admin_comment.id_for_label }}">Комментарий (требуется для статуса "Принято в работу"):</label>
-            {{ form.admin_comment }}
-            {% if form.admin_comment.errors %}
-                <div class="alert alert-error">{{ form.admin_comment.errors }}</div>
-            {% endif %}
-            {{ form.admin_comment.help_text|default:"" }}
-        </div>
+    <div class="card form-card">
+        <h2>Выберите новый статус</h2>
+        <p class="form-note">
+             Некоторые статусы требуют дополнительной информации. Поля подсвечиваются автоматически.
+        </p>
 
-        <button type="submit" class="btn btn-primary">Сохранить изменения</button>
-        <a href="{% url 'admin_dashboard' %}" class="btn btn-secondary">Отмена</a>
-    </form>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
 
-    <p><strong>Подсказка:</strong> Выбранный статус будет применён только если все обязательные поля для него заполнены правильно.</p>
 
+            <div class="form-field">
+                <label for="{{ form.status.id_for_label }}" class="field-label">
+                    Новый статус
+                </label>
+                {{ form.status }}
+                {% if form.status.errors %}
+                    <p class="field-error">{{ form.status.errors }}</p>
+                {% endif %}
+                <p class="field-hint">
+                    <strong>«Принято в работу»</strong> — укажите комментарий для клиента.<br>
+                    <strong>«Выполнено»</strong> — загрузите финальное изображение дизайна.
+                </p>
+            </div>
+
+
+            <div class="form-field">
+                <label for="{{ form.admin_comment.id_for_label }}" class="field-label">
+                    Комментарий для клиента
+                </label>
+                <p class="field-hint">Отображается в личном кабинете клиента. Например: сроки, следующие шаги.</p>
+                {{ form.admin_comment }}
+                {% if form.admin_comment.errors %}
+                    <p class="field-error">{{ form.admin_comment.errors }}</p>
+                {% endif %}
+            </div>
+
+
+            <div class="form-field">
+                <label for="{{ form.design_image.id_for_label }}" class="field-label">
+                    Финальный дизайн
+                </label>
+                <p class="field-hint">
+                    Загрузите 3D-визуализацию, фоторендер или коллаж. Форматы: JPG, PNG. До 2 МБ.
+                </p>
+                {{ form.design_image }}
+                {% if form.design_image.errors %}
+                    <p class="field-error">{{ form.design_image.errors }}</p>
+                {% endif %}
+
+                {% if request_obj.design_image %}
+                    <div class="current-preview">
+                        <span>Текущий дизайн:</span>
+                        <a href="{{ request_obj.design_image.url }}" target="_blank" class="link">
+                             Открыть
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary btn-lg">
+                     Сохранить статус
+                </button>
+                <a href="{% url 'admin_dashboard' %}" class="btn btn-outline">← Отмена</a>
+            </div>
+        </form>
+    </div>
+
+    <div class="info-box">
+        <p>
+            💡 <strong>Совет:</strong> После смены статуса клиент получит уведомление по email и увидит обновление в личном кабинете.
+        </p>
+    </div>
+</div>
 {% endblock %}
